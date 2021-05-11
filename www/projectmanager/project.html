@@ -25,7 +25,7 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" id="projects-btn" href="#" data-bs-toggle="collapse" data-bs-target="#navbarColor03">Projects</a>
+                <a class="nav-link" id="projects-btn" href="#" data-bs-toggle="collapse" data-bs-target="#navbarColor03">Projects<span class="visually-hidden">(current)</span></a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" id="chats-btn" href="#" data-bs-toggle="collapse" data-bs-target="#navbarColor03">Chats</a>
@@ -44,7 +44,7 @@
         </div>
       </nav>
       <div class="container">
-            <h1>This is Main Page</h1>
+            <h1 id="project_name"></h1>
       </div>
       <div class="modal fade" id="tasksModal" tabindex="-1" role="dialog" aria-labelledby="taskModalTitle" aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -73,24 +73,49 @@
             $("#projects-btn").click(function(){
                 window.location.replace("allprojects.html");
             });
+            var getUrlParameter = function getUrlParameter(sParam) {
+                var sPageURL = window.location.search.substring(1),
+                    sURLVariables = sPageURL.split('&'),
+                    sParameterName,
+                    i;
 
+                for (i = 0; i < sURLVariables.length; i++) {
+                    sParameterName = sURLVariables[i].split('=');
 
-            $(document).on("click", ".open-plan", function(){
-              var p_id = $(this).val();
-              console.log(p_id);
-              $.ajax({
-                url: "http://127.0.0.1:8000/api/" + u.role + "/plan/" + p_id,
-                method: "GET",
-                crossDomain: true,
-                success: function(d){
-                  d = JSON.parse(d);
-                  if('msg' in d){
-                      alert(d["msg"]);
-                  }else{
-                    $("#taskModal").modal('show');
-                  }
+                    if (sParameterName[0] === sParam) {
+                        return typeof sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+                    }
                 }
-              })
+                return false;
+            };
+            $(document).on("click", ".open-tasks", function(){
+                window.location.replace("tasks.html?id=" + $(this).val());
+            });
+            $(document).ready(function(){
+                $.ajax({
+                    url: "http://127.0.0.1:8000/api/" + u.role + "/project/" + getUrlParameter('id'),
+                    method: "GET",
+                    crossDomain: true,
+                    success: function(d){
+                        d = JSON.parse(d); 
+                        d = d[0];
+                        console.log(d); 
+                        $("#project_name").text(d.project_name);
+                        d.plans.forEach(function(item){
+                            $(".container").append(
+                                "<div class='card my-2'>" +
+                                "<div class='card-body row'>" +
+                                    "<div class='col-8'>" +
+                                    item.plan_name +
+                                    "</div>" +
+                                    "<div class='col-2'>" +
+                                    "<button class='btn btn-primary open-tasks' value='" + item.id + "'>Show Tasks</button></div>" +
+                                "</div>" +
+                                "</div>"
+                            );
+                        });
+                    } 
+                });
             });
       </script>
       <script src="../cordova.js"></script>

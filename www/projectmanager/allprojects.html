@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.min.js" integrity="sha384-j0CNLUeiqtyaRmlzUHCPZ+Gy5fQu0dQ6eZ/xAww941Ai1SxSY+0EQqNXNE6DZiVc" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <title>Document</title>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">CMPM</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor03" aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+            </button>
+        
+            <div class="collapse navbar-collapse" id="navbarColor03">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                <a class="nav-link active" href="#" data-bs-toggle="collapse" data-bs-target="#navbarColor03">Home
+                    <span class="visually-hidden">(current)</span>
+                </a>
+                </li>
+                <li class="nav-item">
+                <a class="nav-link" id="projects-btn" href="#" data-bs-toggle="collapse" data-bs-target="#navbarColor03">Projects<span class="visually-hidden">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                <a class="nav-link" id="chats-btn" href="#" data-bs-toggle="collapse" data-bs-target="#navbarColor03">Chats</a>
+                </li>
+                <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Account</a>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" id="profile-btn" href="#" data-bs-toggle="collapse" data-bs-target="#navbarColor03">Profile</a>
+                    <a class="dropdown-item" id="settings-btn" href="#" data-bs-toggle="collapse" data-bs-target="#navbarColor03">Settings</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" id="logout-btn" href="#" data-bs-toggle="collapse" data-bs-target="#navbarColor03">Logout</a>
+                </div>
+                </li>
+            </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+        <h1>This is Main Page</h1>
+    </div>
+    <script>
+        var u = JSON.parse(localStorage.getItem("user"));
+        $("#logout-btn").click(function(){
+            localStorage.removeItem("user");
+            window.location.replace("../index.html");
+        });
+        $(document).ready(function(){
+            $.ajax({
+                url: "http://127.0.0.1:8000/api/" + u.role + "/projects",
+                method: "GET",
+                crossDomain: true,
+                success: function(d){
+                    d = JSON.parse(d);
+                    $(".container").html("");
+                    console.log(d);
+                    d.forEach(function(e){
+                        $(".container").append(
+                            '<div class="card my-3">' +
+                                '<div class="card-body row">' +
+                                    '<div class="col-8">' +
+                                        e.project_name + '</br>' +
+                                        e.project_status +
+                                    '</div>' +
+                                    '<div class="col-2">' +
+                                        '<button class="btn btn-primary open-project" value="' + e.id + '">Open</button>' +
+                                    '</div>' +
+                                '</div>' +
+                            '</div>'
+                        );
+                    });
+                }
+            });
+        });
+        $(document).on("click", ".open-project", function(){
+            var p_id = $(this).val();
+            window.location.replace("project.html?id=" + p_id);
+        });
+
+    </script>
+</body>
+</html>
