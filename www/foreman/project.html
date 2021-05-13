@@ -27,6 +27,7 @@
             <ul class="navbar-nav me-auto">
               <li class="nav-item">
                 <a class="nav-link active" href="#" data-bs-toggle="collapse" data-bs-target="#navbarColor03">Home
+                  <span class="visually-hidden">(current)</span>
                 </a>
               </li>
               <li class="nav-item">
@@ -49,24 +50,7 @@
         </div>
       </nav>
       <div class="container">
-            <h1 id="task_name"></h1>
-            <div class="form-group">
-                <label for="date_start">Task Start</label>
-                <input type="date" id="date_start" class="form-control" value="" readonly>
-            </div>
-            <div class="form-group">
-                <label for="date_end">Task End</label>
-                <input type="date" id="date_end" class="form-control" value="" readonly>
-            </div>
-            <div class="container mt-5" id="task_reports">
-              <img id="imageURI" class="img-fluid" height="500px" src="">
-              <div id="controls" class="col">
-                <div class="form-group row">
-                  <label for="">Task Description</label>
-                  <input type="text" class="form-control" id="task_details">
-                </div>
-              </div>
-            </div>
+            <h1 id="project_name"></h1>
       </div>
       <div class="modal fade" id="tasksModal" tabindex="-1" role="dialog" aria-labelledby="taskModalTitle" aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -88,8 +72,6 @@
       </div>
       <script>
             var u = JSON.parse(localStorage.getItem("user"));
-            var captured = "";
-            
             $("#logout-btn").click(function(){
                 localStorage.removeItem("user");
                 window.location.replace("../index.html");
@@ -112,67 +94,34 @@
                 }
                 return false;
             };
-            $(document).on("click", ".open-task", function(){
+            $(document).on("click", ".open-tasks", function(){
                 window.location.replace("tasks.html?id=" + $(this).val());
             });
-            function onDeviceReady() {
-                console.log(navigator.camera);
-            }
             $(document).ready(function(){
                 $.ajax({
-                    url: host + u.role + "/task/" + getUrlParameter('id'),
+                    url: host + u.role + "/project/" + getUrlParameter('id'),
                     method: "GET",
                     crossDomain: true,
                     success: function(d){
-                        d = JSON.parse(d);
-                        var task = d["task"];
-                        var report = d["reports"];
-                        $("#task_name").text(task['task_name']);
-                        $("#date_start").val(task['task_date_start']);
-                        $("#date_end").val(task['task_date_end']);
-                        console.log(report);
-                        if(report){
-                          $("#imageURI").attr("src", host_non_api + report["task_picture"]);
-                          $("#task_details").val(report['task_details']);
-                          $("#task_details").attr("readonly", "true");
-
-                        }else{
-                            $("#controls").append("<p id='report-notice'>No Reports Yet!</p>");
-                            $("#controls").append(
-                                "<button class='btn btn-primary' id='report'>Report Task</button>"
+                        d = JSON.parse(d); 
+                        d = d[0];
+                        console.log(d); 
+                        $("#project_name").text(d.project_name);
+                        d.plans.forEach(function(item){
+                            $(".container").append(
+                                "<div class='card my-2'>" +
+                                "<div class='card-body row'>" +
+                                    "<div class='col-8'>" +
+                                    item.plan_name +
+                                    "</div>" +
+                                    "<div class='col-2'>" +
+                                    "<button class='btn btn-primary open-tasks' value='" + item.id + "'>Show Tasks</button></div>" +
+                                "</div>" +
+                                "</div>"
                             );
-                        }
+                        });
                     } 
                 });
-            });
-            function cameraSuccess(imageURI){
-                captured = "data:image/jpeg;base64," + imageURI;
-                $("#imageURI").attr("src", captured);
-                $.ajax({
-                url: host + u.role + "/task/report",
-                method: "POST",
-                data: {
-                  "task_id" : getUrlParameter('id'),
-                  "task_details": $("#task_details").val(),
-                  "user_id": u.id,
-                  "base64image":  captured
-                },
-                success: function(d){
-                  d = JSON.parse(d);
-                  $("#imageURI").attr("src", host_non_api + d["task_picture"]);
-                  $("#task_details").attr("readonly", "true");
-                }
-              });
-            }
-            var button;
-            function cameraError(message){
-              button.slideDown(500);
-                alert("Faild Because: " + message);
-            }
-            $(document).on("click", "#report", function(){
-                $(this).slideUp(500);
-                button = $(this);
-                navigator.camera.getPicture(cameraSuccess, cameraError, { quality: 50, destinationType: Camera.DestinationType.DATA_URL });
             });
       </script>
       <script src="../cordova.js"></script>
