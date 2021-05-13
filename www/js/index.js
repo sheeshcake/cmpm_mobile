@@ -23,6 +23,8 @@ document.addEventListener('deviceready', onDeviceReady, false);
 
 function onDeviceReady() {
     // Cordova is now initialized. Have fun!
-
+    document.addEventListener("offline", function(e){
+        alert("NO_NETWORK");
+    });
     console.log('Running cordova-' + cordova.platformId + '@' + cordova.version);
 }

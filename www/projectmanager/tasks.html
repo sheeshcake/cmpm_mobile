@@ -98,6 +98,7 @@
                     crossDomain: true,
                     success: function(d){
                         d = JSON.parse(d);
+                        // console.log(d);
                         d.forEach(function(item){
                             $(".container").append(
                                 "<div class='card my-2'>" +

@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="
+    default-src *;
+    style-src * 'unsafe-inline'; 
+    script-src * 'unsafe-inline'; 
+" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.min.js" integrity="sha384-j0CNLUeiqtyaRmlzUHCPZ+Gy5fQu0dQ6eZ/xAww941Ai1SxSY+0EQqNXNE6DZiVc" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="../css/bootstrap.min.css">
@@ -44,7 +49,6 @@
         </div>
       </nav>
       <div class="container">
-            <img id="imageURI" src="" hidden>
             <h1 id="task_name"></h1>
             <div class="form-group">
                 <label for="date_start">Task Start</label>
@@ -55,7 +59,13 @@
                 <input type="date" id="date_end" class="form-control" value="" readonly>
             </div>
             <div class="container mt-5" id="task_reports">
-
+              <img id="imageURI" class="img-fluid" height="500px" src="">
+              <div id="controls" class="col">
+                <div class="form-group row">
+                  <label for="">Task Description</label>
+                  <input type="text" class="form-control" id="task_details">
+                </div>
+              </div>
             </div>
       </div>
       <div class="modal fade" id="tasksModal" tabindex="-1" role="dialog" aria-labelledby="taskModalTitle" aria-hidden="true">
@@ -78,6 +88,8 @@
       </div>
       <script>
             var u = JSON.parse(localStorage.getItem("user"));
+            var captured = "";
+            
             $("#logout-btn").click(function(){
                 localStorage.removeItem("user");
                 window.location.replace("../index.html");
@@ -118,12 +130,12 @@
                         $("#date_start").val(d.task_date_start);
                         $("#date_end").val(d.task_date_end);
                         if(d.task_reports > 0){
-                            $("#task_reports").html(
+                            $("#controls").append(
                                 "<button class='btn btn-primary'>Report Task</button>"
                             );
                         }else{
-                            $("#task_reports").html("<p>No Reports Yet!</p>");
-                            $("#task_reports").append(
+                            $("#controls").append("<p id='report-notice'>No Reports Yet!</p>");
+                            $("#controls").append(
                                 "<button class='btn btn-primary' id='report'>Report Task</button>"
                             );
                         }
@@ -131,34 +143,27 @@
                 });
             });
             function cameraSuccess(imageURI){
-                $("#imageURI").attr("src", imageURI);
-                image_loc = imageURI;
-                image.style.width = map + "px";
-                image.src = image_loc;
+                captured = "data:image/jpeg;base64," + imageURI;
+                $("#imageURI").attr("src", captured);
                 $.ajax({
-                        type: "POST",
-                        url: host + u.role + "/task/" + getUrlParameter('id'),
-                        data:{
-                            'get': 'true'
-                        },
-                        success: function(response){
-                            console.log(response);
-                            try{
-                                dept_data = JSON.parse(response);
-                                get_data(dept_data);
-
-                            }catch(e){
-                                console.log(e);
-                            }
-                        }
-
-                    });
+                url: host + u.role + "/task/report",
+                method: "POST",
+                data: {
+                  "task_id" : getUrlParameter('id'),
+                  "task_details": $("#task_details").val(),
+                  "user_id": u.id,
+                  "base64image":  captured
+                },
+                success: function(d){
+                  $("#imageURI").attr("src", d);
+                }
+              });
             }
             function cameraError(message){
                 alert("Faild Because: " + message);
             }
             $(document).on("click", "#report", function(){
-                navigator.camera.getPicture(cameraSuccess, cameraError, { quality: 50, destinationType: Camera.DestinationType.FILE_URI });
+                navigator.camera.getPicture(cameraSuccess, cameraError, { quality: 50, destinationType: Camera.DestinationType.DATA_URL });
             });
       </script>
       <script src="../cordova.js"></script>
