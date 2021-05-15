@@ -105,8 +105,8 @@
                     crossDomain: true,
                     success: function(d){
                       if(data != d){
-                        $("#task_container").html("");
                         data = d;
+                        $("#task_container").html("");
                         d = JSON.parse(d);
                         console.log(d.plan_details);
                         $("#plan_name").text("Plan: " + d.plan_details["plan_name"]);
@@ -116,19 +116,6 @@
                           console.log(item);
                           if("reports" in item){
                             if(item.reports.is_ce_approved == "true"){
-                              $("#task_container").append(
-                                "<div class='card'>" +
-                                  "<div class='card-body row'>" +
-                                    "<div class='col-8'>" +
-                                      item.task_name +
-                                    "</div>" +
-                                    "<div class='col-2'>" +
-                                      "<button value='" + item.id + "' class='btn btn-success open-report'>Open Report</button>" +
-                                    "</div>" +
-                                  "</div>" +
-                                "</div>"
-                              );
-                            }else if(item.reports.is_pm_approved == "true"){
                               $("#task_container").append(
                                 "<div class='card'>" +
                                   "<div class='card-body row'>" +
@@ -149,7 +136,7 @@
                                       item.task_name +
                                     "</div>" +
                                     "<div class='col-2'>" +
-                                      "<button value='" + item.id + "' class='btn btn-warning open-report' disabled>Waiting for Approval</button>" +
+                                      "<button value='" + item.id + "' class='btn btn-primary open-report'>Open Report</button>" +
                                     "</div>" +
                                   "</div>" +
                                 "</div>"
@@ -172,14 +159,13 @@
                           }
                         });
                       }
+                      
                     } 
                 });
             }
             $(document).ready(function(){
-              update();
               setInterval(update, 1000);
-            });
-            
+            }); 
             $(document).on("click", ".open-report", function(){
               window.location.replace("task.html?id=" + $(this).val());
             });

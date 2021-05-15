@@ -27,10 +27,11 @@
             <ul class="navbar-nav me-auto">
               <li class="nav-item">
                 <a class="nav-link active" href="#" data-bs-toggle="collapse" data-bs-target="#navbarColor03">Home
+                  <span class="visually-hidden">(current)</span>
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" id="projects-btn" href="#" data-bs-toggle="collapse" data-bs-target="#navbarColor03">Projects<span class="visually-hidden">(current)</span></a>
+                <a class="nav-link" id="projects-btn" href="#" data-bs-toggle="collapse" data-bs-target="#navbarColor03">Projects</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" id="chats-btn" href="#" data-bs-toggle="collapse" data-bs-target="#navbarColor03">Chats</a>
@@ -49,32 +50,28 @@
         </div>
       </nav>
       <div class="container">
-        <div class="card">
-          <img src="" alt="" id="r_img" class="card-img-top">
-          <div class="card-body">
-            <div class="row">
-              <div class="form-group">
-                <label for="">Report Description</label>
-                <textarea name="" id="r_desc" cols="30" rows="10" class="form-control" readonly></textarea>
-              </div>
-              <div class="d-flex">
-                <p>Date Reported: <b id="r_date"></b></p>
-              </div>
-              <div class="form-group">
-                <label for="">Reported By</label>
-                <input type="text" id="r_user" class="form-control" readonly>
-              </div>
-              <div class="d-flex justify-content-center mt-3">
-                <button value="" class="btn btn-primary" id="approve">Approve Report</button>
-              </div>
+            <h1>This is Main Page</h1>
+      </div>
+      <div class="modal fade" id="tasksModal" tabindex="-1" role="dialog" aria-labelledby="taskModalTitle" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="taskModalTitle"></h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary">Save changes</button>
             </div>
           </div>
         </div>
       </div>
       <script>
             var u = JSON.parse(localStorage.getItem("user"));
-            var captured = "";
-            
             $("#logout-btn").click(function(){
                 localStorage.removeItem("user");
                 window.location.replace("../index.html");
@@ -82,53 +79,24 @@
             $("#projects-btn").click(function(){
                 window.location.replace("allprojects.html");
             });
-            var getUrlParameter = function getUrlParameter(sParam) {
-                var sPageURL = window.location.search.substring(1),
-                    sURLVariables = sPageURL.split('&'),
-                    sParameterName,
-                    i;
 
-                for (i = 0; i < sURLVariables.length; i++) {
-                    sParameterName = sURLVariables[i].split('=');
 
-                    if (sParameterName[0] === sParam) {
-                        return typeof sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
-                    }
-                }
-                return false;
-            };
-            $(document).ready(function(){
-                $.ajax({
-                    url: host + u.role + "/report/" + getUrlParameter('id'),
-                    method: "GET",
-                    crossDomain: true,
-                    success: function(d){
-                      d = JSON.parse(d);
-                      var report = d["report"][0];
-                      var user = d["user"][0];
-                      console.log(report);
-                      console.log(user);
-                      $("#approve").val(report["id"]);
-                      $("#r_img").attr("src", host_non_api + report["task_picture"]);
-                      $("#r_desc").val(report["task_details"]);
-                      $("#r_date").text(report.created_at);
-                      $("#r_user").val(user['f_name'] + ' ' + user['l_name']);
-                    } 
-                });
-            });
-            $("#approve").click(function(){
+            $(document).on("click", ".open-plan", function(){
+              var p_id = $(this).val();
+              console.log(p_id);
               $.ajax({
-                url: host + u.role + "/report/approve",
-                method: "POST",
-                data: {
-                  "id": $(this).val()
-                },
+                url: host + u.role + "/plan/" + p_id,
+                method: "GET",
+                crossDomain: true,
                 success: function(d){
                   d = JSON.parse(d);
-                  alert(d.msg);
+                  if('msg' in d){
+                      alert(d["msg"]);
+                  }else{
+                    $("#taskModal").modal('show');
+                  }
                 }
-              });
-              $(this).attr("disabled", "true");
+              })
             });
       </script>
       <script src="../cordova.js"></script>
