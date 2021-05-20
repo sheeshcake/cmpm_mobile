@@ -44,24 +44,45 @@
         </div>
       </nav>
       <div class="container">
-            <h1 id="task_name"></h1>
-            <div class="form-group">
-                <label for="date_start">Task Start</label>
-                <input type="date" id="date_start" class="form-control" value="" readonly>
-            </div>
-            <div class="form-group">
-                <label for="date_end">Task End</label>
-                <input type="date" id="date_end" class="form-control" value="" readonly>
-            </div>
-            <div class="container mt-5" id="task_reports">
-              <img id="imageURI" class="img-fluid" height="500px" src="">
-              <div id="controls" class="col">
-                <div class="form-group row">
-                  <label for="">Task Description</label>
-                  <input type="text" class="form-control" id="task_details">
-                </div>
-              </div>
-            </div>
+           <div class="card mt-2">
+               <div class="card-header">
+                   <h3>Profile</h3>
+               </div>
+               <div class="card-body">
+                 <form id="profile_form">
+                    <input type="hidden" id="id" name="id">
+                    <div class="form-group row">
+                        <label for="client_f_name">First Name</label>
+                        <input type="text" class="form-control" id="client_f_name" name="client_f_name" required>
+                    </div>
+                    <div class="form-group row">
+                        <label for="client_l_name">Last Name</label>
+                        <input type="text" class="form-control" id="client_l_name" name="client_l_name" required>
+                    </div>
+                    <div class="form-group row">
+                        <label for="client_email">Email</label>
+                        <input type="text" class="form-control" id="client_email" name="client_email" required>
+                    </div>
+                    <div class="form-group row">
+                      <label for="client_contact_number">Contact Number</label>
+                      <input type="text" class="form-control" id="client_contact_number" name="client_contact_number" required>
+                  </div>
+                  <div class="form-group row">
+                      <label for="client_username">Username</label>
+                      <input type="text" class="form-control" id="client_username" name="client_username" required>
+                  </div>
+                  <div class="form-group row">
+                    <label for="client_password">Change Password</label>
+                    <input type="password" class="form-control" id="client_password" name="client_password">
+                  </div>
+                  <div id="bot-alert">
+                    <div class="d-flex justify-content-center">
+                      <button type="submit" id="update" class="btn btn-primary mt-3">Update</button>
+                    </div>
+                  </div>
+                </form>
+               </div>
+           </div>
       </div>
       <div class="modal fade" id="tasksModal" tabindex="-1" role="dialog" aria-labelledby="taskModalTitle" aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -83,68 +104,31 @@
       </div>
       <script>
             var u = JSON.parse(localStorage.getItem("user"));
-            var captured = "";
-            $(document).on("click", ".open-task", function(){
-                window.location.replace("tasks.html?id=" + $(this).val());
-            });
-            function onDeviceReady() {
-                console.log(navigator.camera);
-            }
             $(document).ready(function(){
-                $.ajax({
-                    url: host + u.role + "/task/" + getUrlParameter('id'),
-                    method: "GET",
-                    crossDomain: true,
-                    success: function(d){
-                        d = JSON.parse(d);
-                        var task = d["task"];
-                        var report = d["reports"];
-                        $("#task_name").text(task['task_name']);
-                        $("#date_start").val(task['task_date_start']);
-                        $("#date_end").val(task['task_date_end']);
-                        console.log(report);
-                        if(report){
-                          $("#imageURI").attr("src", host_non_api + report["task_picture"]);
-                          $("#task_details").val(report['task_details']);
-                          $("#task_details").attr("readonly", "true");
-
-                        }else{
-                            $("#controls").append("<p id='report-notice'>No Reports Yet!</p>");
-                            $("#controls").append(
-                                "<button class='btn btn-primary' id='report'>Report Task</button>"
-                            );
-                        }
-                    } 
-                });
+                $("#id").val(u["id"]);
+                $("#client_f_name").val(u["client_f_name"]);
+                $("#client_l_name").val(u["client_l_name"]);
+                $("#client_email").val(u["client_email"]);
+                $("#client_username").val(u["client_username"]);
+                $("#client_contact_number").val(u["client_contact_number"]);
             });
-            function cameraSuccess(imageURI){
-                captured = "data:image/jpeg;base64," + imageURI;
-                $("#imageURI").attr("src", captured);
-                $.ajax({
-                url: host + u.role + "/task/report",
+            $("#profile_form").submit(function(e){
+              $("#update").attr("disabled", "true");
+              $("#update").html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>Loading...');
+              e.preventDefault();
+              var form = $(this);
+              $.ajax({
+                url: host + "user/profile/updateprofile",
                 method: "POST",
-                data: {
-                  "task_id" : getUrlParameter('id'),
-                  "task_details": $("#task_details").val(),
-                  "user_id": u.id,
-                  "base64image":  captured
-                },
+                data: form.serialize(),
                 success: function(d){
                   d = JSON.parse(d);
-                  $("#imageURI").attr("src", host_non_api + d["task_picture"]);
-                  $("#task_details").attr("readonly", "true");
+                  $("#update").removeAttr("disabled");
+                  $("#update").html('Update');
+                  $(".alert").remove();
+                  $("#bot-alert").prepend("<div class='alert alert-" + d["status"] + "'>" + d["msg"] + "</div>");
                 }
               });
-            }
-            var button;
-            function cameraError(message){
-              button.slideDown(500);
-                alert("Faild Because: " + message);
-            }
-            $(document).on("click", "#report", function(){
-                $(this).slideUp(500);
-                button = $(this);
-                navigator.camera.getPicture(cameraSuccess, cameraError, { quality: 50, destinationType: Camera.DestinationType.DATA_URL });
             });
       </script>
       <script src="../cordova.js"></script>

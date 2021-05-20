@@ -21,10 +21,6 @@
           <div class="collapse navbar-collapse" id="navbarColor03">
             <ul class="navbar-nav me-auto">
               <li class="nav-item">
-                <a class="nav-link active" href="#" data-bs-toggle="collapse" data-bs-target="#navbarColor03">Home
-                </a>
-              </li>
-              <li class="nav-item">
                 <a class="nav-link" id="projects-btn" href="#" data-bs-toggle="collapse" data-bs-target="#navbarColor03">Projects<span class="visually-hidden">(current)</span></a>
               </li>
               <li class="nav-item">
@@ -34,7 +30,6 @@
                 <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Account</a>
                 <div class="dropdown-menu">
                   <a class="dropdown-item" id="profile-btn" href="#" data-bs-toggle="collapse" data-bs-target="#navbarColor03">Profile</a>
-                  <a class="dropdown-item" id="settings-btn" href="#" data-bs-toggle="collapse" data-bs-target="#navbarColor03">Settings</a>
                   <div class="dropdown-divider"></div>
                   <a class="dropdown-item" id="logout-btn" href="#" data-bs-toggle="collapse" data-bs-target="#navbarColor03">Logout</a>
                 </div>
@@ -76,28 +71,6 @@
       <script>
             var u = JSON.parse(localStorage.getItem("user"));
             var data;
-            $("#logout-btn").click(function(){
-                localStorage.removeItem("user");
-                window.location.replace("../index.html");
-            });
-            $("#projects-btn").click(function(){
-                window.location.replace("allprojects.html");
-            });
-            var getUrlParameter = function getUrlParameter(sParam) {
-                var sPageURL = window.location.search.substring(1),
-                    sURLVariables = sPageURL.split('&'),
-                    sParameterName,
-                    i;
-
-                for (i = 0; i < sURLVariables.length; i++) {
-                    sParameterName = sURLVariables[i].split('=');
-
-                    if (sParameterName[0] === sParam) {
-                        return typeof sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
-                    }
-                }
-                return false;
-            };
             function update(){
               $.ajax({
                     url: host + u.role + "/plan/" + getUrlParameter('id'),

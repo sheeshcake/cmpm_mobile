@@ -21,11 +21,6 @@
             <div class="collapse navbar-collapse" id="navbarColor03">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
-                <a class="nav-link active" href="#" data-bs-toggle="collapse" data-bs-target="#navbarColor03">Home
-                    <span class="visually-hidden">(current)</span>
-                </a>
-                </li>
-                <li class="nav-item">
                 <a class="nav-link" id="projects-btn" href="#" data-bs-toggle="collapse" data-bs-target="#navbarColor03">Projects<span class="visually-hidden">(current)</span></a>
                 </li>
                 <li class="nav-item">
@@ -35,7 +30,6 @@
                 <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Account</a>
                 <div class="dropdown-menu">
                     <a class="dropdown-item" id="profile-btn" href="#" data-bs-toggle="collapse" data-bs-target="#navbarColor03">Profile</a>
-                    <a class="dropdown-item" id="settings-btn" href="#" data-bs-toggle="collapse" data-bs-target="#navbarColor03">Settings</a>
                     <div class="dropdown-divider"></div>
                     <a class="dropdown-item" id="logout-btn" href="#" data-bs-toggle="collapse" data-bs-target="#navbarColor03">Logout</a>
                 </div>
@@ -45,14 +39,14 @@
         </div>
     </nav>
     <div class="container">
-        <h1>This is Main Page</h1>
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border" role="status">
+            </div>
+            <h3>Loading</h3>
+        </div>
     </div>
     <script>
         var u = JSON.parse(localStorage.getItem("user"));
-        $("#logout-btn").click(function(){
-            localStorage.removeItem("user");
-            window.location.replace("../index.html");
-        });
         $(document).ready(function(){
             $.ajax({
                 url: host + "user/projects/" + u.id,

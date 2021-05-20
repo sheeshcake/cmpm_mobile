@@ -40,7 +40,6 @@
                 <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Account</a>
                 <div class="dropdown-menu">
                   <a class="dropdown-item" id="profile-btn" href="#" data-bs-toggle="collapse" data-bs-target="#navbarColor03">Profile</a>
-                  <a class="dropdown-item" id="settings-btn" href="#" data-bs-toggle="collapse" data-bs-target="#navbarColor03">Settings</a>
                   <div class="dropdown-divider"></div>
                   <a class="dropdown-item" id="logout-btn" href="#" data-bs-toggle="collapse" data-bs-target="#navbarColor03">Logout</a>
                 </div>
@@ -72,14 +71,6 @@
       </div>
       <script>
             var u = JSON.parse(localStorage.getItem("user"));
-            $("#logout-btn").click(function(){
-                localStorage.removeItem("user");
-                window.location.replace("../index.html");
-            });
-            $("#projects-btn").click(function(){
-                window.location.replace("allprojects.html");
-            });
-
 
             $(document).on("click", ".open-plan", function(){
               var p_id = $(this).val();
