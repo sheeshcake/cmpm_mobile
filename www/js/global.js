@@ -32,7 +32,9 @@ $(document).ready(function(){
     $("#profile-btn").click(function(){
         window.location.replace("profile.html");
     });
-    
+    $("#chats-btn").click(function(){
+        window.location.replace("chats.html");
+    });
 });
 
 

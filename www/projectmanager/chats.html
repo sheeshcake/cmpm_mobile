@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="
+    default-src *;
+    style-src * 'unsafe-inline'; 
+    script-src * 'unsafe-inline'; 
+" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.min.js" integrity="sha384-j0CNLUeiqtyaRmlzUHCPZ+Gy5fQu0dQ6eZ/xAww941Ai1SxSY+0EQqNXNE6DZiVc" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="../css/bootstrap.min.css">
@@ -21,11 +26,11 @@
           <div class="collapse navbar-collapse" id="navbarColor03">
             <ul class="navbar-nav me-auto">
               <li class="nav-item">
-                <a class="nav-link" id="projects-btn" href="#" data-bs-toggle="collapse" data-bs-target="#navbarColor03">Projects<span class="visually-hidden">(current)</span></a>
+                <a class="nav-link" id="projects-btn" href="#" data-bs-toggle="collapse" data-bs-target="#navbarColor03">Projects</a>
               </li>
-              <!-- <li class="nav-item">
+              <li class="nav-item">
                 <a class="nav-link" id="chats-btn" href="#" data-bs-toggle="collapse" data-bs-target="#navbarColor03">Chats</a>
-              </li> -->
+              </li>
               <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Account</a>
                 <div class="dropdown-menu">
@@ -39,13 +44,7 @@
         </div>
       </nav>
       <div class="container">
-            <h1 id="project_name"></h1>
-            <div id="main-img"></div>
-            <div id="project_status" class="d-flex justify-content-center">
-              <div id="datas" class="p-2">
-
-              </div>
-            </div>
+            <h1>This is Main Page</h1>
       </div>
       <div class="modal fade" id="tasksModal" tabindex="-1" role="dialog" aria-labelledby="taskModalTitle" aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -67,52 +66,23 @@
       </div>
       <script>
             var u = JSON.parse(localStorage.getItem("user"));
-            $(document).on("click", ".open-tasks", function(){
-                window.location.replace("tasks.html?id=" + $(this).val());
-            });
-            $(document).ready(function(){
-                $.ajax({
-                    url: host + "user/project/" + getUrlParameter('id'),
-                    method: "GET",
-                    crossDomain: true,
-                    success: function(d){
-                        d = JSON.parse(d);
-                        var has_data = false;
-                        d = d[0];
-                        console.log(d); 
-                        $("#project_name").text(d.project_name);
-                        if(d.project_status == "planning"){
-                          $("#project_status").append('<img src="../img/planning.gif"><br>Were planning about your project please be patient');
-                          $("#main-img").append('<img class="img-fluid" src="../img/planning2.gif">');
-                        }else{
-                          d.plans.forEach(function(plan){
-                            if(plan.tasks.length > 0){
-                              $("#datas").append(
-                                "<div class='alert alert-primary'>" +
-                                  plan["plan_name"] + 
-                                "</div>"
-                              );
-                              plan.tasks.forEach(function(tasks){
-                                if(tasks["reports"].length > 0){
-                                  has_data = true;
-                                  $("#datas").append(
-                                    "<div class='card mb-2'>" +
-                                      "<img class='card-img-top' src='" + host_non_api + tasks["reports"][0]["task_picture"] + "'>" +
-                                      "<div class='card-body'>" + tasks["task_name"] + "<br><hr>" + tasks["reports"][0]["date_done"] + "</div>" +
-                                    "</div>"
-                                  );
-                                }
-                              });
-                            }
-                          });
-                          if(!has_data){
-                            $("#datas").append(
-                                "<img class='img-fluid' src='../img/progress.gif'>"
-                            );
-                          }
-                        }
-                    } 
-                });
+
+            $(document).on("click", ".open-plan", function(){
+              var p_id = $(this).val();
+              console.log(p_id);
+              $.ajax({
+                url: host + u.role + "/plan/" + p_id,
+                method: "GET",
+                crossDomain: true,
+                success: function(d){
+                  d = JSON.parse(d);
+                  if('msg' in d){
+                      alert(d["msg"]);
+                  }else{
+                    $("#taskModal").modal('show');
+                  }
+                }
+              })
             });
       </script>
       <script src="../cordova.js"></script>
