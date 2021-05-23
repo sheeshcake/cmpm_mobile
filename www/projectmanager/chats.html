@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="
+    default-src *;
+    style-src * 'unsafe-inline'; 
+    script-src * 'unsafe-inline'; 
+" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.min.js" integrity="sha384-j0CNLUeiqtyaRmlzUHCPZ+Gy5fQu0dQ6eZ/xAww941Ai1SxSY+0EQqNXNE6DZiVc" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="../css/bootstrap.min.css">
@@ -21,7 +26,10 @@
           <div class="collapse navbar-collapse" id="navbarColor03">
             <ul class="navbar-nav me-auto">
               <li class="nav-item">
-                <a class="nav-link" id="projects-btn" href="#" data-bs-toggle="collapse" data-bs-target="#navbarColor03">Projects<span class="visually-hidden">(current)</span></a>
+                <a class="nav-link" id="projects-btn" href="#" data-bs-toggle="collapse" data-bs-target="#navbarColor03">Projects</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" id="chats-btn" href="#" data-bs-toggle="collapse" data-bs-target="#navbarColor03">Chats</a>
               </li>
               <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Account</a>
@@ -36,33 +44,7 @@
         </div>
       </nav>
       <div class="container">
-            <div class="alert alert-warning mt-3">
-                You can only update your profile on web
-            </div>
-           <div class="card mt-2">
-               
-               <div class="card-header">
-                   <h3>Profile</h3>
-               </div>
-               <div class="card-body">
-                    <div class="form-group row">
-                        <label for="f_name">First Name</label>
-                        <input type="text" class="form-control" id="f_name" readonly>
-                    </div>
-                    <div class="form-group row">
-                        <label for="l_name">Last Name</label>
-                        <input type="text" class="form-control" id="l_name" readonly>
-                    </div>
-                    <div class="form-group row">
-                        <label for="email">Email</label>
-                        <input type="text" class="form-control" id="email" readonly>
-                    </div>
-                    <div class="form-group row">
-                        <label for="username">Username</label>
-                        <input type="text" class="form-control" id="username" readonly>
-                    </div>
-               </div>
-           </div>
+            <h1>This is Main Page</h1>
       </div>
       <div class="modal fade" id="tasksModal" tabindex="-1" role="dialog" aria-labelledby="taskModalTitle" aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -84,11 +66,23 @@
       </div>
       <script>
             var u = JSON.parse(localStorage.getItem("user"));
-            $(document).ready(function(){
-                $("#f_name").val(u["f_name"]);
-                $("#l_name").val(u["l_name"]);
-                $("#email").val(u["email"]);
-                $("#username").val(u["username"]);
+
+            $(document).on("click", ".open-plan", function(){
+              var p_id = $(this).val();
+              console.log(p_id);
+              $.ajax({
+                url: host + u.role + "/plan/" + p_id,
+                method: "GET",
+                crossDomain: true,
+                success: function(d){
+                  d = JSON.parse(d);
+                  if('msg' in d){
+                      alert(d["msg"]);
+                  }else{
+                    $("#taskModal").modal('show');
+                  }
+                }
+              })
             });
       </script>
       <script src="../cordova.js"></script>
