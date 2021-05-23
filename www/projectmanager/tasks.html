@@ -23,9 +23,6 @@
               <li class="nav-item">
                 <a class="nav-link" id="projects-btn" href="#" data-bs-toggle="collapse" data-bs-target="#navbarColor03">Projects<span class="visually-hidden">(current)</span></a>
               </li>
-              <li class="nav-item">
-                <a class="nav-link" id="chats-btn" href="#" data-bs-toggle="collapse" data-bs-target="#navbarColor03">Chats</a>
-              </li>
               <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Account</a>
                 <div class="dropdown-menu">
@@ -37,6 +34,13 @@
             </ul>
           </div>
         </div>
+      </nav>
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item" aria-current="page"><a href="allprojects.html">Projects</a></li>
+            <li class="breadcrumb-item" aria-current="page"><a href="" id="p_name_bc"></a></li>
+            <li class="breadcrumb-item active" aria-current="page" id="current"></li>
+        </ol>
       </nav>
       <div class="container">
         <div class="card">
@@ -78,13 +82,16 @@
                     crossDomain: true,
                     success: function(d){
                       if(data != d){
+                        console.log(d);
                         $("#task_container").html("");
                         data = d;
                         d = JSON.parse(d);
-                        console.log(d.plan_details);
                         $("#plan_name").text("Plan: " + d.plan_details["plan_name"]);
                         $("#plan_start").text("Start: " + d.plan_details["plan_date_start"]);
                         $("#plan_end").text("End: " + d.plan_details["plan_date_end"]);
+                        window.localStorage.setItem("plan_name", d.plan_details["plan_name"]);
+                        window.localStorage.setItem("plan_id", d.plan_details["id"]);
+                        $("#current").text(d.plan_details["plan_name"]);
                         d.task_details.forEach(function(item){
                           console.log(item);
                           if("reports" in item){
@@ -150,6 +157,9 @@
             }
             $(document).ready(function(){
               update();
+              var project = JSON.parse(window.localStorage.getItem("project"));
+              $("#p_name_bc").text(project["project_name"]);
+              $("#p_name_bc").attr("href", "project.html?id=" + project["id"]);
               setInterval(update, 1000);
             });
             $(document).on("click", ".open-report", function(){

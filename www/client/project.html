@@ -23,9 +23,6 @@
               <li class="nav-item">
                 <a class="nav-link" id="projects-btn" href="#" data-bs-toggle="collapse" data-bs-target="#navbarColor03">Projects<span class="visually-hidden">(current)</span></a>
               </li>
-              <li class="nav-item">
-                <a class="nav-link" id="chats-btn" href="#" data-bs-toggle="collapse" data-bs-target="#navbarColor03">Chats</a>
-              </li>
               <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Account</a>
                 <div class="dropdown-menu">
@@ -37,6 +34,12 @@
             </ul>
           </div>
         </div>
+      </nav>
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item" aria-current="page"><a href="allprojects.html">Projects</a></li>
+            <li class="breadcrumb-item active" aria-current="page" id="current"></li>
+        </ol>
       </nav>
       <div class="container">
             <h1 id="project_name"></h1>
@@ -81,6 +84,7 @@
                         d = d[0];
                         console.log(d); 
                         $("#project_name").text(d.project_name);
+                        $("#current").text(d.project_name);
                         if(d.project_status == "planning"){
                           $("#project_status").append('<img src="../img/planning.gif"><br>Were planning about your project please be patient');
                           $("#main-img").append('<img class="img-fluid" src="../img/planning2.gif">');

@@ -4,11 +4,6 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="
-    default-src *;
-    style-src * 'unsafe-inline'; 
-    script-src * 'unsafe-inline'; 
-" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.min.js" integrity="sha384-j0CNLUeiqtyaRmlzUHCPZ+Gy5fQu0dQ6eZ/xAww941Ai1SxSY+0EQqNXNE6DZiVc" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="../css/bootstrap.min.css">
@@ -28,9 +23,6 @@
               <li class="nav-item">
                 <a class="nav-link" id="projects-btn" href="#" data-bs-toggle="collapse" data-bs-target="#navbarColor03">Projects<span class="visually-hidden">(current)</span></a>
               </li>
-              <li class="nav-item">
-                <a class="nav-link" id="chats-btn" href="#" data-bs-toggle="collapse" data-bs-target="#navbarColor03">Chats</a>
-              </li>
               <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Account</a>
                 <div class="dropdown-menu">
@@ -42,6 +34,14 @@
             </ul>
           </div>
         </div>
+      </nav>
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item" aria-current="page"><a href="allprojects.html">Projects</a></li>
+            <li class="breadcrumb-item" aria-current="page"><a href="" id="p_name_bc"></a></li>
+            <li class="breadcrumb-item" aria-current="page"><a href="" id="pl_name_bc"></a></li>
+            <li class="breadcrumb-item active" aria-current="page" id="current">Report Details</li>
+        </ol>
       </nav>
       <div class="container">
         <div class="card">
@@ -70,12 +70,18 @@
             var u = JSON.parse(localStorage.getItem("user"));
             var captured = "";
             $(document).ready(function(){
+                var project = JSON.parse(window.localStorage.getItem("project"));
+                $("#p_name_bc").text(project["project_name"]);
+                $("#p_name_bc").attr("href", "project.html?id=" + project["id"]);
+                $("#pl_name_bc").text(window.localStorage.getItem("plan_name"));
+                $("#pl_name_bc").attr("href", "tasks.html?id=" + window.localStorage.getItem("plan_id"));
                 $.ajax({
                     url: host + u.role + "/report/" + getUrlParameter('id'),
                     method: "GET",
                     crossDomain: true,
                     success: function(d){
                       d = JSON.parse(d);
+                      console.log(d);
                       var report = d["report"][0];
                       var user = d["user"][0];
                       console.log(report);

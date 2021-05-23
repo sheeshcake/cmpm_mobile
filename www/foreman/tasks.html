@@ -23,9 +23,6 @@
               <li class="nav-item">
                 <a class="nav-link" id="projects-btn" href="#" data-bs-toggle="collapse" data-bs-target="#navbarColor03">Projects<span class="visually-hidden">(current)</span></a>
               </li>
-              <li class="nav-item">
-                <a class="nav-link" id="chats-btn" href="#" data-bs-toggle="collapse" data-bs-target="#navbarColor03">Chats</a>
-              </li>
               <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Account</a>
                 <div class="dropdown-menu">
@@ -37,6 +34,13 @@
             </ul>
           </div>
         </div>
+      </nav>
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item" aria-current="page"><a href="allprojects.html">Projects</a></li>
+            <li class="breadcrumb-item" aria-current="page"><a href="" id="p_name_bc"></a></li>
+            <li class="breadcrumb-item active" aria-current="page" id="current"></li>
+        </ol>
       </nav>
       <div class="container">
             <h1 id="project_name"></h1>
@@ -62,15 +66,27 @@
       <script>
             var u = JSON.parse(localStorage.getItem("user"));
             $(document).on("click", ".open-task", function(){
+                window.localStorage.setItem("task_id", $(this).val());
                 window.location.replace("task.html?id=" + $(this).val());
             });
             $(document).ready(function(){
+              var project = JSON.parse(window.localStorage.getItem("project"));
+              $("#p_name_bc").text(project["project_name"]);
+              $("#p_name_bc").attr("href", "project.html?id=" + project["id"]);
+              project.plans.forEach(function(item){
+                console.log(item);
+                if(item["id"] == window.localStorage.getItem("plan_id")){
+                  $("#current").text(item["plan_name"]);
+                  window.localStorage.setItem("plan_name", item["plan_name"]);
+                }
+              });
                 $.ajax({
                     url: host + u.role + "/plan/" + getUrlParameter('id'),
                     method: "GET",
                     crossDomain: true,
                     success: function(d){
                         d = JSON.parse(d);
+                        console.log(d);
                         d.forEach(function(item){
                             $(".container").append(
                                 "<div class='card my-2'>" +
